@@ -1,0 +1,31 @@
+============================================================
+                         CubOps v 1.0
+
+            INSTITUTO MEXICANO DE TECNOLOGÍA DEL AGUA
+                           Dec 2017
+            Registro de derechos de autor -- en trámite
+
+------------------------------------------------------------------
+LICENCE:
+
+The present system is provided free of charge and can be
+used for non-profit activities, as long as individuals or
+Institutions that use it give explicit recognition
+to the Mexican Institute for Water Technology (IMTA).
+
+The dissemination and use of source code, delivered as part of the
+this product, is subject to the terms and conditions that
+are described in a precise way in the GPLv3 license, under which
+it ss provided and can be consulted on the page:
+
+http://www.gnu.org/licenses/gpl-3.0.html
+
+Under the terms of the license, the source code of the product 
+can be modified and, therefore, it is suggested to notify to 
+IMTA and also to provide the source code for such modifications 
+as a contribution to the improvement of the product.
+
+The system is granted "as is" and the Mexican Institute for Water 
+Technology does not assume any responsibility for the use that 
+may be made of it, or for the information derived from its use.
+============================================================
