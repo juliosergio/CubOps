@@ -113,12 +113,7 @@ ui <- fluidPage(
                   "Guarda Archivo Datos",
                   "Lee Archivo",
                   "Elige Variable",
-                  "Operacion",
-                  "Busca en estructura",
-                  "Prueba tags",
-                  "Modifica Registro",
-                  # "Elimina Registros",
-                  "Ver tabla completa"
+                  "Operacion"
                   )
             ),
             tags$hr(),
