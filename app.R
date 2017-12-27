@@ -110,8 +110,8 @@ ui <- fluidPage(
                 "op", "Acción",
                 c("", 
                   "Colecta Datos",
-                  "Guarda Archivo Datos",
                   "Lee Archivo",
+                  "Guarda Archivo Datos",
                   "Elige Variable",
                   "Operacion"
                   )
@@ -139,10 +139,9 @@ ui <- fluidPage(
                 # selectInput("vname", "Variable a revisar", Vnames),
                 selectInput(
                     "op0", "Operación",
-                    c("", 
-                      "sum",
-                      "mean",
+                    c("mean",
                       "median",
+                      "sum",
                       "min",
                       "max",
                       "range",
@@ -264,8 +263,13 @@ server <- function(input, output, session) {
                 output$tipOp <- renderText("Text")
             },
             E = { # Elige la variable a tratar
+                G_reset(F)
                 subTabla <<- Cubote$Cubote[,,input$vname]
                 displTable <<- arreglaDspl(subTabla, Cubote$Coords)
+                # Actualizaciones:
+                updateTextInput(session, "qprobs", value = sqprobs)
+                updateCheckboxGroupInput(session, "iMask", selected = vtn[iMask])
+                updateTextInput(session, "etq", value = "")
                 output$dspTbl <- renderDataTable(stylizedDT(displTable))
                 output$tipOp <- renderText("Table")
             },
