@@ -9,6 +9,7 @@ library(DT)
 source("MiniBiblioteca.R")
 source("CollectFilesF.R")
 source("OperateCubote.R")
+source("Density.R")
 
 # === Estructuras Globales ===
 G_reset <- function(rsCubote=T) {
@@ -87,9 +88,16 @@ stylizedDT <- function(ddf, ...) {
         ddf, 
         options = list(scrollX=T, 
                        style='bootstrap',
-                       pageLength = 15), 
+                       pageLength = 10), 
         ...
     )
+}
+
+manipulaDisplT <- function (input, session, Table) {
+    # hh <- hist(Table[-(1:2),as.integer(input$colNum)], plot=F)
+    dspTbl <- renderDataTable(stylizedDT(Table))
+    tipOp <- renderText("Table")
+    list(dspTbl=dspTbl, tipOp=tipOp)
 }
 
 # =====================================
@@ -205,7 +213,26 @@ ui <- fluidPage(
             conditionalPanel(
                 condition = "output.tipOp == 'Table'",
                 dataTableOutput("dspTbl"),
-                wellPanel(downloadButton("downloadST", "Descarga Resultado"))
+                wellPanel(downloadButton("downloadST", "Descarga Resultado")),
+                fluidRow(
+                    column(
+                        4, 
+                        selectInput(
+                            "colNum",
+                            "Columna de análisis",
+                            ""
+                        )
+                    ), # column
+                    column(
+                        8,
+                        sliderInput(
+                            "binsNum",
+                            "Número aprox. bins",
+                            value = 25, min = 1, max = 100
+                        )
+                    ) # column
+                ), # fluidRow
+                plotOutput("plt")
             )
         )
     )
@@ -270,8 +297,19 @@ server <- function(input, output, session) {
                 updateTextInput(session, "qprobs", value = sqprobs)
                 updateCheckboxGroupInput(session, "iMask", selected = vtn[iMask])
                 updateTextInput(session, "etq", value = "")
-                output$dspTbl <- renderDataTable(stylizedDT(displTable))
-                output$tipOp <- renderText("Table")
+                # output$dspTbl <- renderDataTable(stylizedDT(displTable))
+                # output$tipOp <- renderText("Table")
+                nn <- 1:ncol(displTable)
+                names(nn) <- names(displTable)
+                updateSelectInput(
+                    session,
+                    "colNum",
+                    choices = nn,
+                    selected = 1
+                )
+                vv <- manipulaDisplT(input, session, displTable)
+                output$dspTbl <- vv$dspTbl
+                output$tipOp <- vv$tipOp
             },
             O = {
                 fOp <- get(input$op0) # Cambiamos el texto a función
@@ -302,8 +340,11 @@ server <- function(input, output, session) {
                 rownames(subTabla) <<- t0[,1]
                 # La estructura de salida:
                 displTable <<- arreglaDspl(subTabla, Cubote$Coords)
-                output$dspTbl <- renderDataTable(stylizedDT(displTable))
-                output$tipOp <- renderText("Table")
+                # output$dspTbl <- renderDataTable(stylizedDT(displTable))
+                # output$tipOp <- renderText("Table")
+                vv <- manipulaDisplT(input, session, displTable)
+                output$dspTbl <- vv$dspTbl
+                output$tipOp <- vv$tipOp
             }
             # A = { # Agrega un registro nuevo a la tabla actual o nueva
             #     dd <- crea1regDF(input$tit, input$href, input$nota, input$tags)
@@ -375,17 +416,51 @@ server <- function(input, output, session) {
     #     # vv$Vop <- (displTable <<- stylizedDT(Cubote))
     # })
     
-    # observe({
-    #     # We'll use the input$regNum variable multiple times, so save it as n
-    #     # for convenience.
-    #     n <- as.integer(input$regNum)
-    #     dd <- Cubote[n,]
-    #     #                    href     tit      tags     nota
-    #     tabEdt$value <<- c(dd$href, dd$descr, dd$tags, dd$note)
-    #     updateGroupTxts(session)
-    # })
+    observe({
+        # La entrada el número de columna, cada vez que cambie
+        n <- as.integer(input$colNum)
+        if (!is.na(n)) {
+            tb <- displTable[-(1:2), n]
+            hh <- hist(tb, plot=F)
+            # View(hh)
+            p <- density(tb, bw = "SJ")
+            # ff0 <- dfunCreate(tb)
+            ff0 <- dSfunCreate(tb) # c/Splines
+            
+            val <- length(hh$counts)
+            updateSliderInput(
+                session,
+                "binsNum",
+                value = val, min = 1, max = 4*val
+            )
+            # output$plt <- renderPlot({
+            #     plot(hh, main = "histograma columna", 
+            #          freq = F, xlim = range(p$x), ylim = range(p$y))
+            #     curve(ff0, col="blue", lwd=2, add=T)
+            # }) # output$plt
+        } # if
+    }) # observe
     
-
+    observe({
+        # La entrada el número de columna, cada vez que cambie
+        n <- as.integer(input$binsNum)
+        isolate( 
+            if (input$colNum != "") {
+                tb <- displTable[-(1:2), as.integer(input$colNum)]
+                hh <- hist(tb, breaks = n, plot=F)
+                # View(hh)
+                p <- density(tb, bw = "SJ")
+                # ff0 <- dfunCreate(tb)
+                ff0 <- dSfunCreate(tb) # c/Splines
+                output$plt <- renderPlot({
+                    plot(hh, main = "histograma columna", 
+                         freq = F, xlim = range(p$x), ylim = range(p$y))
+                    curve(ff0, col="blue", lwd=2, add=T)
+                }) # output$plt
+            } # if
+        ) # isolate 
+    }) # observe
+    
     # output$dspTbl <- renderDataTable(stylizedDT(vv$Vop))
     
     # output$oMask <- renderUI({
