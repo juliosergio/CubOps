@@ -95,8 +95,33 @@ stylizedDT <- function(ddf, ...) {
 
 manipulaDisplT <- function (input, session, Table) {
     # hh <- hist(Table[-(1:2),as.integer(input$colNum)], plot=F)
+    nn <- 1:ncol(Table)
+    names(nn) <- names(Table)
+
     dspTbl <- renderDataTable(stylizedDT(Table))
     tipOp <- renderText("Table")
+
+    updateSelectInput(
+        session,
+        "colNum",
+        choices = nn,
+        selected = 1
+    )
+    
+    tb <- Table[-(1:2), 1]
+    hh <- hist(tb, plot=F)
+    # View(hh)
+    # p <- density(tb) #, bw = "SJ")
+    # ff0 <- dfunCreate(tb)
+    # ff0 <- dSfunCreate(tb) # c/Splines
+    
+    val <- length(hh$counts)
+    updateSliderInput(
+        session,
+        "binsNum",
+        value = val, min = 1, max = 4*val
+    )
+    
     list(dspTbl=dspTbl, tipOp=tipOp)
 }
 
@@ -299,14 +324,14 @@ server <- function(input, output, session) {
                 updateTextInput(session, "etq", value = "")
                 # output$dspTbl <- renderDataTable(stylizedDT(displTable))
                 # output$tipOp <- renderText("Table")
-                nn <- 1:ncol(displTable)
-                names(nn) <- names(displTable)
-                updateSelectInput(
-                    session,
-                    "colNum",
-                    choices = nn,
-                    selected = 1
-                )
+                # nn <- 1:ncol(displTable)
+                # names(nn) <- names(displTable)
+                # updateSelectInput(
+                #     session,
+                #     "colNum",
+                #     choices = nn,
+                #     selected = 1
+                # )
                 vv <- manipulaDisplT(input, session, displTable)
                 output$dspTbl <- vv$dspTbl
                 output$tipOp <- vv$tipOp
@@ -423,9 +448,9 @@ server <- function(input, output, session) {
             tb <- displTable[-(1:2), n]
             hh <- hist(tb, plot=F)
             # View(hh)
-            p <- density(tb, bw = "SJ")
+            # p <- density(tb) #, bw = "SJ")
             # ff0 <- dfunCreate(tb)
-            ff0 <- dSfunCreate(tb) # c/Splines
+            # ff0 <- dSfunCreate(tb) # c/Splines
             
             val <- length(hh$counts)
             updateSliderInput(
@@ -445,17 +470,18 @@ server <- function(input, output, session) {
         # La entrada el número de columna, cada vez que cambie
         n <- as.integer(input$binsNum)
         isolate( 
-            if (input$colNum != "") {
+            if (input$colNum != "") { 
                 tb <- displTable[-(1:2), as.integer(input$colNum)]
                 hh <- hist(tb, breaks = n, plot=F)
                 # View(hh)
-                p <- density(tb, bw = "SJ")
+                p <- density(tb) # , bw = "SJ")
                 # ff0 <- dfunCreate(tb)
-                ff0 <- dSfunCreate(tb) # c/Splines
+                # ff0 <- dSfunCreate(tb) # c/Splines
                 output$plt <- renderPlot({
                     plot(hh, main = "histograma columna", 
-                         freq = F, xlim = range(p$x), ylim = range(p$y))
-                    curve(ff0, col="blue", lwd=2, add=T)
+                         freq = F, col="gray", xlim = range(p$x), ylim = range(p$y))
+                    lines(p, col="blue", lwd=2)
+                    # curve(ff0, col="blue", lwd=2, add=T)
                 }) # output$plt
             } # if
         ) # isolate 
@@ -493,8 +519,8 @@ server <- function(input, output, session) {
         if(is.null(input$rnd)) {
             runjs("
                 var click = 0;
-                Shiny.onInputChange('rnd', click)
-                var dwnldBtn = document.getElementById('downloadData')
+                Shiny.onInputChange('rnd', click);
+                var dwnldBtn = document.getElementById('downloadData');
                 dwnldBtn.onclick = function() {click += 1; Shiny.onInputChange('rnd', click)};
             ")      
         } else if (input$rnd > 0) 
@@ -506,7 +532,7 @@ server <- function(input, output, session) {
                 # reseteamos el contador:
                 runjs("
                     var click = 0;
-                    Shiny.onInputChange('rnd', click)
+                    Shiny.onInputChange('rnd', click);
                 ")      
             })
     })
