@@ -4,7 +4,7 @@
 # ========================
 
 library(data.table)
-if (!exists("LEIDO.MiBiblioteca")) source("RR/MiBiblioteca.R", chdir = T)
+if (!exists("LEIDO.MiniBiblioteca")) source("MiniBiblioteca.R")
 
 
 # La función de densidad es la composición de dos funciones:

@@ -7,6 +7,7 @@ LEIDO.MiniBiblioteca <- TRUE
 
 library(dplyr)
 library(tidyr)
+library(data.table)
 # library(stringdist)
 composite <- function(f,g) function(...) f(g(...))
 # como operador:
@@ -364,3 +365,29 @@ nameChar <- function(v1) {
 toDplyr <- tbl_df %cmp% read.csv
 toDplyrNf <- tbl_df %cmp% readCsv # sin considerar como Factores los strings
 
+maskChr <- function(arr, pattrn, fill="") {
+    # arr: arreglo de strings a enmascarar
+    # pattrn: patrón de llenado alternando T, F, así,
+    #        c(3,4), deja pasar 3 de arr y bloquea 4 remplazándolos
+    #                por fill, y repite la secuencia
+    #        c(0,3,4,1,2) bloquea 3, deja pasar 4, bloquea 1, deja pasar 2
+    #                     y repite toda la secuencia
+    #                     En este caso el 0 del principio, sólo invierte
+    #                     el orden a F, T
+    # Por ejemplo:
+    #      maskChr(letters, c(0,2,3))
+    # produce:
+    # [1] ""  ""  "c" "d" "e" ""  ""  "h" "i" "j" ""  ""  "m" "n" "o" ""  ""  "r" "s" "t"
+    # [21] ""  ""  "w" "x" "y" "" 
+    #
+    m <- length(arr)
+    n <- sum(pattrn)
+    nn <- length(pattrn)
+    reps <- ceiling(m/n)
+    sq <- rep(c(T,F), ceiling(nn/2))[1:nn]
+    discr <- rep(do.call(c, mapply(rep,sq,pattrn)), reps)[1:m]
+    arr <- data.frame(qq=arr, discr=discr)
+    setDT(arr)[,rr := fill]
+    arr[discr, rr := qq]
+    return(arr$rr)
+}

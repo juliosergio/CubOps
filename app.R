@@ -192,34 +192,6 @@ ui <- fluidPage(
                                    vtn[iMask]),
                 textInput("etq", "Nombre de su operación")
             ),
-            # conditionalPanel(
-            #     condition = "input.op == 'Busca en estructura'",
-            #     checkboxGroupInput("selcols", "Columnas a buscar", vtnams, vtnams),
-            #     radioButtons("tbusc", "Tipo de búsqueda", c("Texto-simple"="txt", "Expr-regular"="rgexp")),
-            #     textInput("rgtxt", "RegExpr o Texto a buscar:")
-            # ),
-            # conditionalPanel(
-            #     condition = "input.op == 'Modifica Registro'",
-            #     numericInput("regNum","Número del registro:", value = 0, min = 0, max = maxR, step = 1),
-            #     conditionalPanel(
-            #         condition = "+input.regNum > 0",
-            #         groupTexts(tabEdt, "E")
-            #     )
-            # ),
-            # conditionalPanel(
-            #     condition = "input.op == 'Prueba tags'",
-            #     fluidRow(
-            #         column(8, textInput("tags0","Tags, separados por \",\"")),
-            #         column(2, br(), actionButton("go0", "", icon = icon("check"))) #, lib="glyphicon")))
-            #     ),
-            #     uiOutput(
-            #         "oMask"
-            #     )
-            # ),
-            # conditionalPanel(
-            #     condition = "input.op == 'Elimina Registros'",
-            #     textInput("qprobs","Números de registros separados por ','")
-            # ),
             conditionalPanel(
                 condition = "input.op != 'Guarda Archivo Datos'",
                 wellPanel(actionButton("go1", "Ejecuta")) 
@@ -249,14 +221,22 @@ ui <- fluidPage(
                         )
                     ), # column
                     column(
-                        8,
-                        sliderInput(
-                            "binsNum",
-                            "Número aprox. bins",
-                            value = 25, min = 1, max = 100
+                        4,
+                        selectInput(
+                            "tGraf",
+                            "Tipo de gráfico",
+                            c("", "hist", "serie", "boxplot"),
                         )
                     ) # column
                 ), # fluidRow
+                conditionalPanel(
+                    condition = "input.tGraf =='hist'",
+                    sliderInput(
+                        "binsNum",
+                        "Número aprox. bins",
+                        value = 25, min = 1, max = 100
+                    )
+                ),
                 plotOutput("plt")
             )
         )
@@ -266,10 +246,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
     output$tipOp <- renderText("None")
     outputOptions(output, "tipOp", suspendWhenHidden=F)
-    # dTags <- eventReactive(input$go0, {
-    #     strsplit(input$tags0, E_SepComma)[[1]]
-    # })
-    # vv <- reactiveValues(Vop=NULL)
+
     observeEvent(input$go1, {
         # Vop(      # input$op)
         # renderText(
@@ -283,12 +260,6 @@ server <- function(input, output, session) {
             "Lee Archivo"="L",
             "Elige Variable"="E",
             "Operacion"="O"
-            # "Agrega Registro"="A",
-            # "Busca en estructura"="B",
-            # "Prueba tags"="P",
-            # "Modifica Registro"="M",
-            # "Elimina Registros"="E",
-            # "Ver tabla completa"="V"
         )
         switch (
             op,
@@ -322,16 +293,6 @@ server <- function(input, output, session) {
                 updateTextInput(session, "qprobs", value = sqprobs)
                 updateCheckboxGroupInput(session, "iMask", selected = vtn[iMask])
                 updateTextInput(session, "etq", value = "")
-                # output$dspTbl <- renderDataTable(stylizedDT(displTable))
-                # output$tipOp <- renderText("Table")
-                # nn <- 1:ncol(displTable)
-                # names(nn) <- names(displTable)
-                # updateSelectInput(
-                #     session,
-                #     "colNum",
-                #     choices = nn,
-                #     selected = 1
-                # )
                 vv <- manipulaDisplT(input, session, displTable)
                 output$dspTbl <- vv$dspTbl
                 output$tipOp <- vv$tipOp
@@ -371,75 +332,8 @@ server <- function(input, output, session) {
                 output$dspTbl <- vv$dspTbl
                 output$tipOp <- vv$tipOp
             }
-            # A = { # Agrega un registro nuevo a la tabla actual o nueva
-            #     dd <- crea1regDF(input$tit, input$href, input$nota, input$tags)
-            #     if (is.null(Cubote)) {
-            #         Cubote <<- dd
-            #     } else 
-            #         Cubote[nrow(Cubote)+1,] <<- dd
-            #     displTable <<- stylizedDT(Cubote)
-            # },
-            # B = { # Búsqueda en la estructura
-            #     # Mandamos señal al cliente (ui) para desplegar
-            #     # botón de guardado de subTabla:
-            #     output$tipOp <- renderText("ready")
-            #     outputOptions(output, "SubT", suspendWhenHidden=F)
-            #     
-            #     ii <- reTest(
-            #         Cubote[,as.integer(input$selcols), drop=F], 
-            #         input$rgtxt, 
-            #         fixed=(input$tbusc=="txt")
-            #     )
-            #     subTabla <<- Cubote[ii,]
-            #     displTable <<- stylizedDT(subTabla)
-            #     output$tipOp <- renderText("ready")
-            # },
-            # P = { # Prueba tags
-            #     msk <- rep(F, length(dTags()))
-            #     msk[as.integer(input$iMask)] <- T
-            #     ii <- sapply(Cubote$tags, function(tags) setTest(input$tags0, tags, msk)) # Los índices que hacen match
-            #     subTabla <- Cubote[ii,]
-            #     displTable <<- stylizedDT(subTabla)
-            #     output$tipOp <- renderText("ready")
-            # },
-            # M = { # Modifica registro
-            #     dd <- data_frame(
-            #         descr    = input$titE,
-            #         href     = input$hrefE,
-            #         add_date = Sys.time(),
-            #         note     = input$notaE,
-            #         private  = "0",
-            #         tags     = input$tagsE
-            #     )
-            #     Cubote[input$regNum,] <<- dd
-            #     displTable <<- stylizedDT(Cubote)
-            # },
-            # E = { # Elimina registro(s)
-            #     # checamos la sintaxis de input$regNum0 por caracteres inválidos
-            #     if (chkSintx("[^[:digit:],:]", input$qprobs)) {
-            #         showModal(modalDialog(
-            #             title = "ERROR de entrada",
-            #             "Secuencia inválida: intente de nuevo!"
-            #         ))
-            #     } else {
-            #         ii <- as.integer(evalstr("c(" %,% input$qprobs %,% ")"))
-            #         Cubote <<- Cubote[-ii,]
-            #         rownames(Cubote) <<- 1:nrow(Cubote)
-            #         displTable <<- stylizedDT(Cubote)
-            #     }
-            # },
-            # V = { # Ver tabla completa
-            #     displTable <<- stylizedDT(Cubote)
-            # }
         )
-        # maxR <<- nrow(Cubote)
-        # vv$Vop <- displTable
     })
-    
-    # observeEvent(input$fnam, { # Aquí entra en "Guarda Archivo de Datos"
-    #     print("Entré")
-    #     # vv$Vop <- (displTable <<- stylizedDT(Cubote))
-    # })
     
     observe({
         # La entrada el número de columna, cada vez que cambie
@@ -447,22 +341,13 @@ server <- function(input, output, session) {
         if (!is.na(n)) {
             tb <- displTable[-(1:2), n]
             hh <- hist(tb, plot=F)
-            # View(hh)
-            # p <- density(tb) #, bw = "SJ")
-            # ff0 <- dfunCreate(tb)
-            # ff0 <- dSfunCreate(tb) # c/Splines
-            
+
             val <- length(hh$counts)
             updateSliderInput(
                 session,
                 "binsNum",
                 value = val, min = 1, max = 4*val
             )
-            # output$plt <- renderPlot({
-            #     plot(hh, main = "histograma columna", 
-            #          freq = F, xlim = range(p$x), ylim = range(p$y))
-            #     curve(ff0, col="blue", lwd=2, add=T)
-            # }) # output$plt
         } # if
     }) # observe
     
@@ -486,15 +371,6 @@ server <- function(input, output, session) {
             } # if
         ) # isolate 
     }) # observe
-    
-    # output$dspTbl <- renderDataTable(stylizedDT(vv$Vop))
-    
-    # output$oMask <- renderUI({
-    #     tg <- dTags()
-    #     vtn <- 1:length(tg)
-    #     names(vtn) <- "__" %,% tg
-    #     checkboxGroupInput("iMask", "Mascara", vtn, vtn)
-    # })
     
     output$downloadData <- downloadHandler(
         filename = function () {

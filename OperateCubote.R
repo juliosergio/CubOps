@@ -18,6 +18,8 @@ S.aggregate <- function (tt, mask, op, label, blank="*") {
     #       recomponen las fechas, correspondiente al 
     #       year, month, day
     #   op: es la operación que se aplica.
+    # blank: es un caracter que se usa como "relleno" para igualar
+    #        expresiones de fecha.
     # label: etiqueta de la operación
     
     # descomponemos la fecha que viene codificada en los
