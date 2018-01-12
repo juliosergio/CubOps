@@ -338,38 +338,60 @@ server <- function(input, output, session) {
     observe({
         # La entrada el número de columna, cada vez que cambie
         n <- as.integer(input$colNum)
-        if (!is.na(n)) {
-            tb <- displTable[-(1:2), n]
-            hh <- hist(tb, plot=F)
-
-            val <- length(hh$counts)
-            updateSliderInput(
-                session,
-                "binsNum",
-                value = val, min = 1, max = 4*val
-            )
-        } # if
+        isolate (
+            if (!is.na(n) && input$tGraf == "hist") {
+                tb <- displTable[-(1:2), n]
+                hh <- hist(tb, plot=F)
+    
+                val <- length(hh$counts)
+                updateSliderInput(
+                    session,
+                    "binsNum",
+                    value = val, min = 1, max = 4*val
+                )
+            } # if
+        ) # isolate
     }) # observe
     
     observe({
-        # La entrada el número de columna, cada vez que cambie
+        # La entrada del tipo de Gráfico c/vez que cambie
+        tGraf <- input$tGraf
         n <- as.integer(input$binsNum)
-        isolate( 
-            if (input$colNum != "") { 
-                tb <- displTable[-(1:2), as.integer(input$colNum)]
-                hh <- hist(tb, breaks = n, plot=F)
-                # View(hh)
-                p <- density(tb) # , bw = "SJ")
-                # ff0 <- dfunCreate(tb)
-                # ff0 <- dSfunCreate(tb) # c/Splines
-                output$plt <- renderPlot({
-                    plot(hh, main = "histograma columna", 
-                         freq = F, col="gray", xlim = range(p$x), ylim = range(p$y))
-                    lines(p, col="blue", lwd=2)
-                    # curve(ff0, col="blue", lwd=2, add=T)
-                }) # output$plt
+        n0 <- as.integer(input$colNum)
+        isolate({
+            if (tGraf != "" && !is.na(n0)) {
+                tb <- displTable[-(1:2), n0]
+                ntb <- rownames(displTable)[-(1:2)]
+                switch (tGraf,
+                    hist = {
+                        hh <- hist(tb, breaks = n, plot=F)
+                        # View(hh)
+                        p <- density(tb) # , bw = "SJ")
+                        # ff0 <- dfunCreate(tb)
+                        # ff0 <- dSfunCreate(tb) # c/Splines
+                        output$plt <- renderPlot({
+                            plot(hh, main = "histograma columna", 
+                                 freq = F, col="gray", xlim = range(p$x), ylim = range(p$y))
+                            lines(p, col="blue", lwd=2)
+                            # curve(ff0, col="blue", lwd=2, add=T)
+                        }) # output$plt
+                    }, # hist
+                    serie = {
+                        m <- length(tb)
+                        # el número máximo de etiquetas a desplegar será 20
+                        cc <- ceiling(m/20)
+                        print(head(ntb))
+                        lbls <- if (m <= 20) ntb else maskChr(ntb, c(1, cc-1))
+                        output$plt <- renderPlot({
+                            barplot(tb, names.arg = lbls, las=2)
+                        })
+                    }, # serie
+                    boxplot = {
+                        output$plt <- renderPlot({boxplot(tb, col = "#75AADB", pch=19)})
+                    }
+                )
             } # if
-        ) # isolate 
+        }) # isolate 
     }) # observe
     
     output$downloadData <- downloadHandler(

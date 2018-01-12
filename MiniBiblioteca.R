@@ -381,9 +381,8 @@ maskChr <- function(arr, pattrn, fill="") {
     # [21] ""  ""  "w" "x" "y" "" 
     #
     m <- length(arr)
-    n <- sum(pattrn)
     nn <- length(pattrn)
-    reps <- ceiling(m/n)
+    reps <- ceiling(m/sum(pattrn))
     sq <- rep(c(T,F), ceiling(nn/2))[1:nn]
     discr <- rep(do.call(c, mapply(rep,sq,pattrn)), reps)[1:m]
     arr <- data.frame(qq=arr, discr=discr)
