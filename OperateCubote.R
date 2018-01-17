@@ -17,10 +17,26 @@ S.aggregate <- function (tt, mask, op, label, blank="*") {
     # mask: es un arreglo de 3 o menos lógicos que indica como se
     #       recomponen las fechas, correspondiente al 
     #       year, month, day
+    #       p.ej., c(T,T,T) indica que permanecen todos los campos,
+    #       es decir, no se "blanquea" ninguno de Y,M,D
     #   op: es la operación que se aplica.
     # blank: es un caracter que se usa como "relleno" para igualar
     #        expresiones de fecha.
     # label: etiqueta de la operación
+    # ======================
+    
+    # Si la máscara son todos T, entonces el procesamiento es de la tabla en
+    # general
+    if (all(mask)) {
+        rr <- apply(tt, 2, op)
+        rr <- if (is.vector(rr)) t(rr) else rr # Si es vector se traspone
+        newcol <- 
+            paste0(
+                label, ".", 
+                if (is.null(rownames(rr))) 1:nrow(rr) else rownames(rr)
+            )
+        return(cbind(op=newcol, as.data.frame(rr)))
+    }
     
     # descomponemos la fecha que viene codificada en los
     # nombres de los renglones:

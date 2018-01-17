@@ -1,0 +1,31 @@
+---
+title: "CubOps: Manual de Usuario"
+author: "Julio Sergio Santana"
+date: "12 de enero de 2018"
+output: 
+  html_document: 
+    self_contained: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introducción
+
+**CubOps** es una aplicación Web que le permitirá operar sobre un conjunto de puntos, típicamente estaciones meteorológicas, cada uno de los cuales contiene infromación temporal de un número finito de variables, como pueden ser, precipitación, temperaturas mínimas y máximas.
+
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

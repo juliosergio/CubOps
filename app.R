@@ -27,50 +27,6 @@ G_reset <- function(rsCubote=T) {
 }
 G_reset()
 
-#<-- DEFINICIONES
-indir <- "./" # (***) Directorio inicial para búsqueda de archivos de datos
-
-tabIni <- data.frame(
-    name=c(
-        "href",
-        "tit",
-        "tags",
-        "nota"
-    ),
-    descr=c(
-        "Liga (href):", 
-        "Título:",
-        "Tags separados por ',':",
-        "Notas:"),
-    value=rep("",4), 
-    stringsAsFactors = F
-)
-
-tabEdt <- tabIni
-tabEdt$value <- c("uno", "dos", "tres", "cuatro")
-maxR = 800
-cn <- c("descr","href","add_date","note","private","tags")
-vtnams <- 1:length(cn)
-names(vtnams) <- cn
-
-
-groupTexts <- function(t0=tabIni, apnd="") {
-    # Debe entregar el resultado como una lista
-    lapply(
-        1:nrow(t0), 
-        function(i)
-            with(t0[i,],
-                textInput(name %,% apnd, descr, value)
-                # print(paste(name, descr, value))
-            )
-    )
-}
-
-updateGroupTxts <- function(session, t0=tabEdt, apnd="E") {
-    for  (i in 1:nrow(t0)) {
-         updateTextInput(session, t0[i,"name"] %,% apnd, value=t0[i,"value"])
-    }
-}
 
 ArmaJS_InSet <- function (elt, Set, eltIsJSVar = T) {
     # Implementa una expresión en JavaScript
@@ -94,7 +50,6 @@ stylizedDT <- function(ddf, ...) {
 }
 
 manipulaDisplT <- function (input, session, Table) {
-    # hh <- hist(Table[-(1:2),as.integer(input$colNum)], plot=F)
     nn <- 1:ncol(Table)
     names(nn) <- names(Table)
 
@@ -109,18 +64,21 @@ manipulaDisplT <- function (input, session, Table) {
     )
     
     tb <- Table[-(1:2), 1]
-    hh <- hist(tb, plot=F)
-    # View(hh)
-    # p <- density(tb) #, bw = "SJ")
-    # ff0 <- dfunCreate(tb)
-    # ff0 <- dSfunCreate(tb) # c/Splines
     
-    val <- length(hh$counts)
-    updateSliderInput(
-        session,
-        "binsNum",
-        value = val, min = 1, max = 4*val
-    )
+    if (input$tGraf %=% "hist") {
+        hh <- hist(tb, plot=F)
+        # View(hh)
+        # p <- density(tb) #, bw = "SJ")
+        # ff0 <- dfunCreate(tb)
+        # ff0 <- dSfunCreate(tb) # c/Splines
+        
+        val <- length(hh$counts)
+        updateSliderInput(
+            session,
+            "binsNum",
+            value = val, min = 1, max = 4*val
+        )
+    }
     
     list(dspTbl=dspTbl, tipOp=tipOp)
 }
@@ -202,44 +160,58 @@ ui <- fluidPage(
             )
         ),
         mainPanel(
-            conditionalPanel(
-                condition = "output.tipOp == 'Text'",
-                h5(em(strong("CubOps:"), "Operación exitosa")),
-                textOutput("txt", container = pre)
-            ),
-            conditionalPanel(
-                condition = "output.tipOp == 'Table'",
-                dataTableOutput("dspTbl"),
-                wellPanel(downloadButton("downloadST", "Descarga Resultado")),
-                fluidRow(
-                    column(
-                        4, 
-                        selectInput(
-                            "colNum",
-                            "Columna de análisis",
-                            ""
-                        )
-                    ), # column
-                    column(
-                        4,
-                        selectInput(
-                            "tGraf",
-                            "Tipo de gráfico",
-                            c("", "hist", "serie", "boxplot"),
-                        )
-                    ) # column
-                ), # fluidRow
-                conditionalPanel(
-                    condition = "input.tGraf =='hist'",
-                    sliderInput(
-                        "binsNum",
-                        "Número aprox. bins",
-                        value = 25, min = 1, max = 100
+            tabsetPanel(
+                tabPanel(
+                    "Salidas",
+                    conditionalPanel(
+                        condition = "output.tipOp == 'Text'",
+                        h5(em(strong("CubOps:"), "Operación exitosa")),
+                        textOutput("txt", container = pre)
+                    ),
+                    conditionalPanel(
+                        condition = "output.tipOp == 'Table'",
+                        dataTableOutput("dspTbl"),
+                        wellPanel(downloadButton("downloadST", "Descarga Resultado")),
+                        fluidRow(
+                            column(
+                                4, 
+                                selectInput(
+                                    "colNum",
+                                    "Columna de análisis",
+                                    ""
+                                )
+                            ), # column
+                            column(
+                                4,
+                                selectInput(
+                                    "tGraf",
+                                    "Tipo de gráfico",
+                                    c("", "hist", "serie", "boxplot"),
+                                )
+                            ) # column
+                        ), # fluidRow
+                        conditionalPanel(
+                            condition = "input.tGraf =='hist'",
+                            sliderInput(
+                                "binsNum",
+                                "Número aprox. bins",
+                                value = 25, min = 1, max = 100
+                            )
+                        ),
+                        plotOutput("plt")
                     )
-                ),
-                plotOutput("plt")
-            )
-        )
+                ), # Salidas
+                tabPanel(
+                    "Manual", 
+                    # Para incluir el manual producido con Rmd, se debe editar
+                    # el HTML, y quitar o comentar los tags <html> y </ html>
+                    # de lo contrario se descompone todo el documento de Shiny
+                    # (todos los conditionalPanel aparecen, sin hacer caso
+                    # de su condición)
+                    includeHTML("Manual.html") # 
+                ) # Manual
+            ) # tabsetPanel
+        ) # mainPanel
     )
 )
 
@@ -248,22 +220,12 @@ server <- function(input, output, session) {
     outputOptions(output, "tipOp", suspendWhenHidden=F)
 
     observeEvent(input$go1, {
-        # Vop(      # input$op)
-        # renderText(
         print("Aquí toy")
         output$tipOp <- renderText("None")
         
-        op <- switch(
-            input$op, 
-            "Colecta Datos"="C",
-            #>>  "Guarda Archivo Datos"="G",
-            "Lee Archivo"="L",
-            "Elige Variable"="E",
-            "Operacion"="O"
-        )
         switch (
-            op,
-            C = { # Crea el Cubote a partir de una estructura de
+            input$op,
+            "Colecta Datos" = { # Crea el Cubote a partir de una estructura de
                   # directorios en un archivo ZIP
                   #             Los datos --+        Las Estaciones --+
                   #                         |                         |
@@ -276,16 +238,16 @@ server <- function(input, output, session) {
                 txt <- paste0(capture.output(str(Cubote)), "\n")
                 output$txt <- renderText(txt)
                 output$tipOp <- renderText("Text")
-            },
-            L = { # Crea la Tabla a partir de un archivo RDS
+            }, # --Colecta Datos
+            "Lee Archivo" = { # Crea la Tabla a partir de un archivo RDS
                 Cubote <<- readRDS(input$fdat0$datapath)
                 Vnames <<- dimnames(Cubote$Cubote)[[3]]
                 updateSelectInput(session, "vname", "Variable a revisar", Vnames)
                 txt <- paste0(capture.output(str(Cubote)), "\n")
                 output$txt <- renderText(txt)
                 output$tipOp <- renderText("Text")
-            },
-            E = { # Elige la variable a tratar
+            }, # --Lee Archivo
+            "Elige Variable" = { # Elige la variable a tratar
                 G_reset(F)
                 subTabla <<- Cubote$Cubote[,,input$vname]
                 displTable <<- arreglaDspl(subTabla, Cubote$Coords)
@@ -293,11 +255,13 @@ server <- function(input, output, session) {
                 updateTextInput(session, "qprobs", value = sqprobs)
                 updateCheckboxGroupInput(session, "iMask", selected = vtn[iMask])
                 updateTextInput(session, "etq", value = "")
+                updateSelectInput(session, "tGraf", selected = "")
+
                 vv <- manipulaDisplT(input, session, displTable)
                 output$dspTbl <- vv$dspTbl
                 output$tipOp <- vv$tipOp
-            },
-            O = {
+            }, # --Elige variable
+            "Operacion" = {
                 fOp <- get(input$op0) # Cambiamos el texto a función
                 # Pero en el caso "quantile" hacemos tratamiento especial
                 if (input$op0=="quantile") { 
@@ -326,13 +290,11 @@ server <- function(input, output, session) {
                 rownames(subTabla) <<- t0[,1]
                 # La estructura de salida:
                 displTable <<- arreglaDspl(subTabla, Cubote$Coords)
-                # output$dspTbl <- renderDataTable(stylizedDT(displTable))
-                # output$tipOp <- renderText("Table")
                 vv <- manipulaDisplT(input, session, displTable)
                 output$dspTbl <- vv$dspTbl
                 output$tipOp <- vv$tipOp
-            }
-        )
+            } # --Operacion
+        ) # --switch
     })
     
     observe({
@@ -379,9 +341,7 @@ server <- function(input, output, session) {
                     serie = {
                         m <- length(tb)
                         # el número máximo de etiquetas a desplegar será 20
-                        cc <- ceiling(m/20)
-                        print(head(ntb))
-                        lbls <- if (m <= 20) ntb else maskChr(ntb, c(1, cc-1))
+                        lbls <- if (m <= 20) ntb else maskChr(ntb, c(1, ceiling(m/20)-1))
                         output$plt <- renderPlot({
                             barplot(tb, names.arg = lbls, las=2)
                         })
@@ -390,9 +350,11 @@ server <- function(input, output, session) {
                         output$plt <- renderPlot({boxplot(tb, col = "#75AADB", pch=19)})
                     }
                 )
-            } # if
-        }) # isolate 
-    }) # observe
+            } else {
+                output$plt <- renderPlot({NULL}) # Para borrar todo plot anterior
+            } # --if
+        }) # --isolate 
+    }) # --observe
     
     output$downloadData <- downloadHandler(
         filename = function () {
@@ -434,6 +396,8 @@ server <- function(input, output, session) {
                 ")      
             })
     })
+    
+    # outputOptions(output, "tipOp", suspendWhenHidden=F)
 }
 
 shinyApp(ui = ui, server = server)

@@ -149,14 +149,19 @@ mdist2 <- function(pts, mp0, pw=1) {
 # Está vacío un vector?
 is.empty.v <- function(v) !as.logical(length(v))
 
-# Comparación que incluye NAs
-compareNA <- function(v1,v2) {
+# Comparación que incluye NAs y NULL
+compareNNA <- function(v1,v2) {
+    if (is.null(v1)) {
+        if (is.null(v2)) return(T)
+        return(rep(F,length(v2)))
+    }
+    if (is.null(v2)) return(rep(F, length(v1)))
     same <- (v1 == v2) | (is.na(v1) & is.na(v2))
     same[is.na(same)] <- FALSE
     return(same)
 }
 # como operador
-`%=%`<- compareNA
+`%=%`<- compareNNA
 
 # Extrae primer elemento de una lista
 bareId <- function (L) L[[1]]
@@ -355,9 +360,14 @@ ExtraeNAnx <- function (X) sapply(extrae(E_anxIn,X), '[', 2)
 evalstr <- function(s, ...) eval(parse(text=s), ...)
 
 # una variable como string
-nameChar <- function(v1) {
+nameChar0 <- function(v1) {
     deparse(substitute(v1))
 }
+
+# otra forma de hacer nameChar0 es:
+nameChar <- # function(x) as.character(substitute(x)) 
+             #    o alternativamente, como composición:
+    as.character %cmp% substitute
 
 
 # Lectura y conversion a dplyr
