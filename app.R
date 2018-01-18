@@ -63,22 +63,25 @@ manipulaDisplT <- function (input, session, Table) {
         selected = 1
     )
     
-    tb <- Table[-(1:2), 1]
+    # tb <- Table[-(1:2), 1]
     
-    if (input$tGraf %=% "hist") {
-        hh <- hist(tb, plot=F)
-        # View(hh)
-        # p <- density(tb) #, bw = "SJ")
-        # ff0 <- dfunCreate(tb)
-        # ff0 <- dSfunCreate(tb) # c/Splines
-        
-        val <- length(hh$counts)
-        updateSliderInput(
-            session,
-            "binsNum",
-            value = val, min = 1, max = 4*val
-        )
-    }
+    updateSelectInput(session, "tGraf", selected = "")
+    
+    # if (input$tGraf %=% "hist") {
+    #     hh <- hist(tb, plot=F)
+    #     # View(hh)
+    #     # p <- density(tb) #, bw = "SJ")
+    #     # ff0 <- dfunCreate(tb)
+    #     # ff0 <- dSfunCreate(tb) # c/Splines
+    #     
+    #     val <- length(hh$counts)
+    #     updateSliderInput(
+    #         session,
+    #         "binsNum",
+    #         value = val, min = 1, max = 4*val
+    #     )
+    # }
+    
     
     list(dspTbl=dspTbl, tipOp=tipOp)
 }
@@ -220,7 +223,7 @@ server <- function(input, output, session) {
     outputOptions(output, "tipOp", suspendWhenHidden=F)
 
     observeEvent(input$go1, {
-        print("Aquí toy")
+        # print("Aquí toy")
         output$tipOp <- renderText("None")
         
         switch (
@@ -255,7 +258,7 @@ server <- function(input, output, session) {
                 updateTextInput(session, "qprobs", value = sqprobs)
                 updateCheckboxGroupInput(session, "iMask", selected = vtn[iMask])
                 updateTextInput(session, "etq", value = "")
-                updateSelectInput(session, "tGraf", selected = "")
+                # YA EN manipulaDsiplT >>> updateSelectInput(session, "tGraf", selected = "")
 
                 vv <- manipulaDisplT(input, session, displTable)
                 output$dspTbl <- vv$dspTbl
