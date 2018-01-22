@@ -6,10 +6,15 @@
 library(shiny)
 library(shinyjs)
 library(DT)
-source("MiniBiblioteca.R")
-source("CollectFilesF.R")
-source("OperateCubote.R")
-source("Density.R")
+dbg <- F
+sss <- if(dbg) debugSource else source
+
+sss("MiniBiblioteca.R")
+sss("CollectFilesF.R")
+sss("OperateCubote.R")
+sss("Density.R")
+
+options(shiny.maxRequestSize= 30*1024^2)
 
 # === Estructuras Globales ===
 G_reset <- function(rsCubote=T) {
@@ -135,6 +140,8 @@ ui <- fluidPage(
                     "op0", "Operación",
                     c("mean",
                       "median",
+                      "var",
+                      "sd",
                       "sum",
                       "min",
                       "max",
@@ -211,7 +218,8 @@ ui <- fluidPage(
                     # de lo contrario se descompone todo el documento de Shiny
                     # (todos los conditionalPanel aparecen, sin hacer caso
                     # de su condición)
-                    includeHTML("Manual.html") # 
+                    # includeHTML("Manual.html") # 
+                    uiOutput("markdown")
                 ) # Manual
             ) # tabsetPanel
         ) # mainPanel
@@ -221,6 +229,20 @@ ui <- fluidPage(
 server <- function(input, output, session) {
     output$tipOp <- renderText("None")
     outputOptions(output, "tipOp", suspendWhenHidden=F)
+    
+    # El manual de usuario:
+    output$markdown <- renderUI({
+        src <- normalizePath('Manual.Rmd')
+        
+        # temporarily switch to the temp dir, in case you do not have write
+        # permission to the current working directory
+        owd <- setwd(tempdir())
+        on.exit(setwd(owd))
+        knitr::opts_knit$set(root.dir = owd)
+        
+        tagList(
+            HTML(knitr::knit2html(text = readLines(src), fragment.only = TRUE)))
+    })
 
     observeEvent(input$go1, {
         # print("Aquí toy")

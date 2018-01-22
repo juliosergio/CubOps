@@ -51,6 +51,10 @@ creaDe_zip <- function(
 
     # Busquemos las coordenadas
     claves <- as.integer(sapply(strsplit(NomEsts, "s"),"[",2))
+    # print(class(EstsCoords$Clave))
+    # print(claves)
+    # print("==========")
+    # print(EstsCoords$Clave)
     ii <- match(claves, EstsCoords$Clave)
     Coords <- EstsCoords[ii, c("Longitud", "Latitud")]
     names(Coords) <- c("Lon", "Lat")
@@ -64,9 +68,9 @@ creaDe_zip <- function(
     } else {
         hdr <- T
         # Los nombres de las columnas
-        cols <- strsplit(frstLine, "[[:blank:]]*,[[:blank:]]*")
+        cols <- strsplit(frstLine, "[[:blank:]]*,[[:blank:]]*")[[1]]
     }
-    
+
     tablas <- lapply(fls, read.csv, header=hdr, col.names=cols)
     # A partir de aquí hará un arreglo con tres dimensiones (cubo), como sigue:
     #   DIMENSIÓN 1: Fecha, construída a partir de las 3 primeras columnas
