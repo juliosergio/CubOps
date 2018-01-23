@@ -32,6 +32,12 @@ G_reset <- function(rsCubote=T) {
 }
 G_reset()
 
+# GLOBAL:
+#   directorio temporal
+ttdir <- tempdir()
+#   plot temporal
+ttplt <- ttdir %,% "/tmpplt.png"
+
 
 ArmaJS_InSet <- function (elt, Set, eltIsJSVar = T) {
     # Implementa una expresión en JavaScript
@@ -68,25 +74,7 @@ manipulaDisplT <- function (input, session, Table) {
         selected = 1
     )
     
-    # tb <- Table[-(1:2), 1]
-    
     updateSelectInput(session, "tGraf", selected = "")
-    
-    # if (input$tGraf %=% "hist") {
-    #     hh <- hist(tb, plot=F)
-    #     # View(hh)
-    #     # p <- density(tb) #, bw = "SJ")
-    #     # ff0 <- dfunCreate(tb)
-    #     # ff0 <- dSfunCreate(tb) # c/Splines
-    #     
-    #     val <- length(hh$counts)
-    #     updateSliderInput(
-    #         session,
-    #         "binsNum",
-    #         value = val, min = 1, max = 4*val
-    #     )
-    # }
-    
     
     list(dspTbl=dspTbl, tipOp=tipOp)
 }
@@ -208,7 +196,11 @@ ui <- fluidPage(
                                 value = 25, min = 1, max = 100
                             )
                         ),
-                        plotOutput("plt")
+                        conditionalPanel(
+                            condition = "output.plt != null",
+                            plotOutput("plt"),
+                            wellPanel(downloadButton("downloadPlot", "Descarga Gráfico"))
+                        )
                     )
                 ), # Salidas
                 tabPanel(
@@ -236,7 +228,7 @@ server <- function(input, output, session) {
         
         # temporarily switch to the temp dir, in case you do not have write
         # permission to the current working directory
-        owd <- setwd(tempdir())
+        owd <- setwd(ttdir)
         on.exit(setwd(owd))
         knitr::opts_knit$set(root.dir = owd)
         
@@ -360,6 +352,8 @@ server <- function(input, output, session) {
                             plot(hh, main = "histograma columna", 
                                  freq = F, col="gray", xlim = range(p$x), ylim = range(p$y))
                             lines(p, col="blue", lwd=2)
+                            dev.copy(png, ttplt)
+                            dev.off()
                             # curve(ff0, col="blue", lwd=2, add=T)
                         }) # output$plt
                     }, # hist
@@ -369,10 +363,16 @@ server <- function(input, output, session) {
                         lbls <- if (m <= 20) ntb else maskChr(ntb, c(1, ceiling(m/20)-1))
                         output$plt <- renderPlot({
                             barplot(tb, names.arg = lbls, las=2)
+                            dev.copy(png, ttplt)
+                            dev.off()
                         })
                     }, # serie
                     boxplot = {
-                        output$plt <- renderPlot({boxplot(tb, col = "#75AADB", pch=19)})
+                        output$plt <- renderPlot({
+                            boxplot(tb, col = "#75AADB", pch=19)
+                            dev.copy(png, ttplt)
+                            dev.off()
+                        })
                     }
                 )
             } else {
@@ -396,6 +396,12 @@ server <- function(input, output, session) {
             "Res-" %,% sub(" ", "_", Sys.time()) %,% ".csv"
         },
         content = function(file) write.csv(displTable, file)
+    )
+    output$downloadPlot <- downloadHandler(
+        filename = function () {
+            "Plot-" %,% sub(" ", "_", Sys.time()) %,% ".png"
+        },
+        content = function(file) file.copy(ttplt, file)
     )
 
     # Lo siguiente es para poder observar cuando se pucha uno de

@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Introducción
+# 1 Introducción
 
 **CubOps** es una aplicación Web que le permitirá operar sobre un conjunto de puntos, típicamente estaciones meteorológicas, cada uno de los cuales contiene infromación temporal de un número finito de variables, como pueden ser, precipitación, temperaturas mínimas y máximas.
 
@@ -19,9 +19,23 @@ Para el análisis y la aplicación de operaciones o producción de algunos gráf
 
 En cualquier momento, el usuario puede descargar las tablas resultantes de sus operaciones en un formato estándar (csv), que podrá ser leído fácilmente por hojas de cálculo, tales como _LibreOffice Calc_, o _Excel_, o por otros sistemas o programas para desarrollar procesos adicionales con la información.
 
-```{r cars}
-summary(cars)
-```
+## 1.1 Aspecto general de CubOps
+
+Para ejecutar el sistema basta con introducir la siguiente URL en alguno de los _browsers_ comunes de la Web, tales como Chrome o Firefox:
+
+http://ip.ip.ip:3838/CubOps
+
+El sistema desplegará una interfaz al usuario, en la cual podrá introducir sus peticiones y recibir sus respuestas. La Fig. 1 Muestra la apariencia general del sistema una vez que se han desarrollado varias operaciones. Al inicio de la sesión, sólo se muestra el menú etiquetado como **Acción**, en el área **A** de la Fig. 1, y las áreas **B** y **C** se muestran vacías, aunque, al pulsar en la pestaña etiquetada como **Manual**, en el área **B**, se desplegará el presente documento.
+
+**Figura 1.** Apariencia general de CubOps
+
+![Apariencia CubOps](CubOpsGral.png)
+
+En esa figura se destacan la tres áreas principales del sistema, a saber:
+
+1. **A**. Panel de acciones. Aquí el usuario define diversas acciones que van desde la captura de sus datos, hasta la operación sobre algún subconjunto de ellos para definir alguna estadística.
+1. **B**. Panel de resultados tabulares. Los resultados tabulares de las operaciones se muestran en este espacio.
+1. **C**. Panel de operaciones y resultados gráficos. Aquí el usuario puede definir diversos tipos de gráfico para alguna de las columnas del resultado tabular.
 
 # Los datos y su recolección
 
