@@ -291,7 +291,7 @@ server <- function(input, output, session) {
                         fOp <- NULL
                     } else {
                         qprobs <<- as.numeric(evalstr("c(" %,% input$qprobs %,% ")"))
-                        fOp <- function(x) quantile(x, qprobs)
+                        fOp <- function(x, ...) quantile(x, qprobs, ...)
                     }
                 }
                 msk <- rep(F, length(vtn))

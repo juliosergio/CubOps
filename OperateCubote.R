@@ -28,7 +28,7 @@ S.aggregate <- function (tt, mask, op, label, blank="*") {
     # Si la máscara son todos T, entonces el procesamiento es de la tabla en
     # general
     if (all(mask)) {
-        rr <- apply(tt, 2, op)
+        rr <- apply(tt, 2, op, na.rm = T)
         rr <- if (is.vector(rr)) t(rr) else rr # Si es vector se traspone
         newcol <- 
             paste0(
