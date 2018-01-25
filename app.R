@@ -283,7 +283,7 @@ server <- function(input, output, session) {
                 # Pero en el caso "quantile" hacemos tratamiento especial
                 if (input$op0=="quantile") { 
                     # checamos la sintaxis de input$qprobs por caracteres inválidos
-                    if (chkSintx("[^[:digit:],.]", input$qprobs)) {
+                    if (chkSintx("[^[:digit:] ,.]", input$qprobs)) {
                         showModal(modalDialog(
                             title = "ERROR de entrada",
                             "Secuencia inválida: intente de nuevo!"

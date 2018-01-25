@@ -33,9 +33,9 @@ El sistema desplegará una interfaz al usuario, en la cual podrá introducir sus
 
 En esa figura se destacan la tres áreas principales del sistema, a saber:
 
-1. **A**. Panel de acciones. Aquí el usuario define diversas acciones que van desde la captura de sus datos, hasta la operación sobre algún subconjunto de ellos para definir alguna estadística.
-1. **B**. Panel de resultados tabulares. Los resultados tabulares de las operaciones se muestran en este espacio.
-1. **C**. Panel de operaciones y resultados gráficos. Aquí el usuario puede definir diversos tipos de gráfico para alguna de las columnas del resultado tabular.
+1. **A**. __Panel de acciones__. Aquí el usuario define diversas acciones que van desde la captura de sus datos, hasta la operación sobre algún subconjunto de ellos para definir alguna estadística.
+1. **B**. __Panel de resultados tabulares__. Los resultados tabulares de las operaciones se muestran en este espacio.
+1. **C**. __Panel de operaciones y resultados gráficos__. Aquí el usuario puede definir diversos tipos de gráfico para alguna de las columnas del resultado tabular.
 
 # 3 Los datos y su recolección
 
@@ -89,7 +89,7 @@ Aparte de la información de diversas variables de las estaciones, que se empaca
 head(read.csv("Estaciones.csv"), 10)
 ```
 
-La tabla debe contener por lo menos tres columnas, la correspondiente a la "Clave" de la estación, y las correspondientes a la "Longitud" y "Latitud" de la estación, con esos nombres de columna.
+La tabla debe contener por lo menos tres columnas, la correspondiente a la "Clave" de la estación, y las correspondientes a la "Longitud" y "Latitud" de la estación, con esos nombres de columna. Además, la tabla debe contener _al menos_ la información de las estaciones que se consignan en el empaquetamiento de la sección 3.3.
 
 ## 3.5 CubOps: colección de los datos
 
@@ -104,11 +104,11 @@ Una vez seleccionada esta acción el sistema provee sendos botones para la _subi
 
 ![Sube datos](ColeccionDatos2.png)
 
-Una vez subidos o cargados estos datos, lo cual se muestra en las barras de avance de la Fig. 5, se debe oprimir el botón "**Ejecuta**", en la parte inferior del panel de Acciones, para proceder al armado completo de la estructura de información que utiliza internamente el sistema. En la Fig. 5, se muestra el resultado, donde, en el panel de resultados tabulares, se muestra un texto que da alguna pista del armado de dicha estructura.
+Ya que se han subido o cargado estos datos, lo cual se muestra en las barras de progreso de la carga en la Fig. 5, se debe oprimir el botón "**Ejecuta**", en la parte inferior del panel de Acciones, para proceder al armado completo de la estructura de información que utiliza internamente el sistema. En la Fig. 5, se muestra el resultado, donde, en el panel de resultados tabulares, se muestra un texto que da alguna pista del armado de dicha estructura.
 
 **Figura 5.** Armado de la estructura de información
 
-![Estruct info](ColeccionDatos4.png)
+![ArmEstruct info](ColeccionDatos4.png)
 
 ## 3.6 Descarga y recarga de la estructura de información
 
@@ -117,4 +117,65 @@ Una vez construída la estructura de información, como se ha mostrado en las se
 La recarga de la estructura de información, se hace seleccionando la entrada "**Lee Archivo**", en el menú de Acciones (ver Fig. 3). Una vez leído algun archivo de este tipo (RDS), el resultado sería semejante al de la construcción de la estructura que se muestra en la Fig. 5.
 
 # 4 Selección de variables
+
+El sistema maneja una estructura de información que se ha construído como se ha señalado en las secciones anteriores. La Fig. 6 muestra de manera gráfica la apariencia de dicha estructura.
+
+**Figura 6.** La estructura de la información
+
+![Estruct Info](Cubote.png)
+
+La estructura puede ser concebida como _un número determinado de tablas_, tantas como variables haya registradas, cuyos renglones serían las fechas y cuyas columnas corresponderían con cada una de las estaciones (ver Fig. 6). El presente sistema permite operar sobre cada una de las tablas de la estructura; esto es, con cada una de las variables registradas. De modo que el primer paso, antes de cualquier operación, es la selección de una tabla o variable para trabajar con ella. 
+
+Para proceder a la selección de la variable, se debe entrar al menú de Acciones y seleccionar de ahí la entrada "**Elige Variable**" (ver Fig. 3). Esta acción abre un menú, "**Variable a revisar**", con el conjunto de variables que se pueden revisar, como se muestra en la Fig. 7.
+
+**Figura 7.** Conjunto de variables que pueden ser revisadas
+
+![Conj vars](SelVar.png)
+
+Una vez que se elige la variable deseada, y luego de que se oprime el botón "**Ejecuta**", en el panel de resultados tabulares, aparece la tabla correspondiente a la variable, con los dos primeros renglones mostrando las coordenadas geográficas de las estaciones. La tabla se puede navegar por páginas. Este resultado se muestra abajo en la Fig. 8.
+
+**Figura 8.** Tabla correspondiente a una variable
+
+![Tab Var](SelVar1.png)
+
+La tabla resultante, se puede descargar a su equipo local, en el formato estándar CSV, oprimiendo el botón "**Descarga Resultado**", que aparece en la parte inferior del panel de resultados tabulares (Ver Fig. 8). 
+
+# 5 Operaciones estadísticas sobre columnas completas
+
+El sistema permite ejecutar alguna de las operaciones estadísticas disponibles, sobre la series completas de datos de todas las columnas exhibidas, que corresponden a las estaciones registradas. Como se verá más adelante, algunas operaciones, como la media, la varianza, o la mediana, reportarán un sólo resultado numérico para cada serie de datos, mientras que otras, como el rango o los cuantiles, reportarán dos o más resultados.
+
+Para seleccionar una operación cualquiera, primeramente se toma del menú de Acciones, la entrada "**Operación**", lo que abre un menú de "**Operación**" con todas las operaciones estadísticas disponibles, tal como se muestra en la Fig. 9. Al momento, las operaciones disponibles son: la media (mean), la mediana (**median**), la varianza (**var**), la desviación estándar (**sd**), la sumatoria (**sum**), el valor mínimo (**min**), el valor máximo (**max**), el rango (**range**), compuesto por los valores mínimo y máximo, y los cuantiles (**quantile**).
+
+**Figura 9.** Menú de operaciones
+
+![Menu Op](SelOper.png)
+
+Nótese, en la Fig. 9, que en la tabla sobre la cuál se va a operar, hay columnas sin datos, tales como las etiquetadas "s27006" y "s27021".
+
+Ya que se ha elegido la operación, por ejemplo _la mediana_, y se le ha dado un nombre, en el campo textual provisto para ello, por ejemplo "mm", se procede a ejecutar dicha operación, para todas las columnas con datos al oprimir el botón "**Ejecuta**" que aparece en la parte inferior del panel de acciones. Los resultados de la operación se muestran en una tabla como la que se muestra en la Fig. 10, donde la operación en cuestión arroja un único resultado para cada serie de datos (columna).
+
+**Figura 10.** Operación de _un solo resultado_ (mediana)
+![Unico res](SelOper1.png)
+
+Nuevamente, la tabla resultante puede ser descargada en un equipo local, en el formato estándar CSV, al oprimir el botón "**Descarga Resultado**".
+
+## 5.1 Operaciones con más de un resultado: cuantiles
+
+Como se mencionó antes, hay operaciones estadísticas que arrojarán más de un dato a la salida. Tal es el caso de los cuantiles. Si se elige esta operación en el menú de "**Operación**", la interfaz del sistema despliega un campo de texto etiquetado como "**Probabilidades separadas por','**", en el que se pueden especificar las probabilidades de _ruptura_, separadas por comas, de los cuantiles para el cálculo. Por omisión, estas probabilidades son: 0, 0.25, 0.50, 0.75 y 1.0, lo que corresponde a los así denominados _cuartiles_ de cada serie. El resultado, que se muestra en la Fig. 11, estaría dado, en ese caso, por 5 renglones, nombrados como: qq.0%, qq.25%, qq.50%, qq.75% y qq.100%.
+
+**Figura 11.** Cuartiles para cada una de las columnas
+
+![Cuarts](SelOper2.png)
+
+La interpretación de la información en esa tabla es más o menos sencilla. Por ejmplo, para la primera columna, etiquetada como "s27001", la serie de datos de temperatura mínima, que fue la variable elegida, tienen un valor mínimo y máximo de 10° y 34°, que en la columna se muestran como los renglones qq.0% y qq.100%, respectivamente, lo que se interpreta como 0% de los datos están tienen un valor menor que 10° y 100% de los datos, esto es, todos, tienen un valor menor o igual que 34°. En este caso, la mediana de los datos es 23.1°, lo que significa que el 50% de los datos es menor o igual a este valor (qq.50%).
+
+Cambiar las probabilidades en el campo de texto, permite desarrollar el calculo de otro tipo de cuantiles. Por ejemplo, si se quisieran calcular los terciles, se podría establecer la siguiente serie de probabilidades: 0, 0.3333, 0.6667, y 1.0. El resultado de esta operación se muestra en la Fig. 12.
+
+**Figura 12.** Terciles para cada una de las columnas
+
+![Tercs](SelOper3.png)
+
+Nuevamente, en cualquiera de estos casos, la tabla resultante, por ejemplo, con cuartiles o terciles, puede ser descargada en un equipo local, en el formato estándar CSV, al oprimir el botón "**Descarga Resultado**".
+
+Nótese además, que las columnas que no tenían información originalmente, tampoco reportan resultados en ninguno de los dos casos ejemplificados.
 
