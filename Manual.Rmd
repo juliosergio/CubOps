@@ -138,7 +138,11 @@ Una vez que se elige la variable deseada, y luego de que se oprime el botón "**
 
 ![Tab Var](SelVar1.png)
 
-La tabla resultante, se puede descargar a su equipo local, en el formato estándar CSV, oprimiendo el botón "**Descarga Resultado**", que aparece en la parte inferior del panel de resultados tabulares (Ver Fig. 8). 
+La tabla resultante, se puede descargar a su equipo local, en el formato estándar CSV, oprimiendo el botón "**Descarga Resultado**", que aparece en la parte inferior del panel de resultados tabulares (Ver Fig. 8).
+
+## 4.1 Selección de variables y operaciones
+
+En la sección siguiente se empieza a tratar el asunto de la aplicación de operaciones sobre los datos contenidos en la tabla o variable seleccionada. Dado que **las operaciones se aplican sobre la tabla visible**, cada vez que se quiera aplicar una nueva operación sobre los mismos datos, será necesario _regresar_ y elegir nuevamente la misma variable para restablecer la tabla de origen. Esto, como se verá más adelante, es porque hay resultados que se obienenen de aplicar consecutivamente varias operaciones sobre las tablas consecutivas resultantes, por ejemplo, en el caso de los promedios de sumas acumulativas de precipitación.
 
 # 5 Operaciones estadísticas sobre columnas completas
 
@@ -161,13 +165,13 @@ Nuevamente, la tabla resultante puede ser descargada en un equipo local, en el f
 
 ## 5.1 Operaciones con más de un resultado: cuantiles
 
-Como se mencionó antes, hay operaciones estadísticas que arrojarán más de un dato a la salida. Tal es el caso de los cuantiles. Si se elige esta operación en el menú de "**Operación**", la interfaz del sistema despliega un campo de texto etiquetado como "**Probabilidades separadas por','**", en el que se pueden especificar las probabilidades de _ruptura_, separadas por comas, de los cuantiles para el cálculo. Por omisión, estas probabilidades son: 0, 0.25, 0.50, 0.75 y 1.0, lo que corresponde a los así denominados _cuartiles_ de cada serie. El resultado, que se muestra en la Fig. 11, estaría dado, en ese caso, por 5 renglones, nombrados como: qq.0%, qq.25%, qq.50%, qq.75% y qq.100%.
+Como se mencionó antes, hay operaciones estadísticas que arrojarán más de un dato a la salida. Tal es el caso de los cuantiles. Si se elige esta operación en el menú de "**Operación**", la interfaz del sistema despliega un campo de texto etiquetado como "**Probabilidades separadas por','**", en el que se pueden especificar las probabilidades de _ruptura_, separadas por comas, de los cuantiles para el cálculo. Por omisión, estas probabilidades son: 0, 0.25, 0.50, 0.75 y 1.0, lo que corresponde a los así denominados _cuartiles_ de cada serie. El resultado, que se muestra en la Fig. 11, estaría dado, en ese caso, por 5 renglones, nombrados como: qq.0%, qq.25%, qq.50%, qq.75% y qq.100%. El prefijo "qq" en todos los nombres de los renglones de la tabla, se ha tomado del campo de texto "**Nombre de su operación**", que es un nombre arbitrario que provee el usuario del sistema.
 
 **Figura 11.** Cuartiles para cada una de las columnas
 
 ![Cuarts](SelOper2.png)
 
-La interpretación de la información en esa tabla es más o menos sencilla. Por ejmplo, para la primera columna, etiquetada como "s27001", la serie de datos de temperatura mínima, que fue la variable elegida, tienen un valor mínimo y máximo de 10° y 34°, que en la columna se muestran como los renglones qq.0% y qq.100%, respectivamente, lo que se interpreta como 0% de los datos están tienen un valor menor que 10° y 100% de los datos, esto es, todos, tienen un valor menor o igual que 34°. En este caso, la mediana de los datos es 23.1°, lo que significa que el 50% de los datos es menor o igual a este valor (qq.50%).
+La interpretación de la información en esa tabla es más o menos sencilla. Por ejmplo, para la primera columna, etiquetada como "s27001", la serie de datos de temperatura mínima, que fue la variable elegida, tienen un valor mínimo y máximo de 10° y 34°, que en la columna se muestran como los renglones qq.0% y qq.100%, respectivamente, lo que se interpreta como 0% de los datos están tienen un valor menor que 10° y 100% de los datos, esto es, todos, tienen un valor menor o igual que 34°. En este caso, la mediana de los datos es 23.1°, lo que significa que el 50% de los datos es menor o igual a este valor (qq.50%). 
 
 Cambiar las probabilidades en el campo de texto, permite desarrollar el calculo de otro tipo de cuantiles. Por ejemplo, si se quisieran calcular los terciles, se podría establecer la siguiente serie de probabilidades: 0, 0.3333, 0.6667, y 1.0. El resultado de esta operación se muestra en la Fig. 12.
 
@@ -178,4 +182,7 @@ Cambiar las probabilidades en el campo de texto, permite desarrollar el calculo 
 Nuevamente, en cualquiera de estos casos, la tabla resultante, por ejemplo, con cuartiles o terciles, puede ser descargada en un equipo local, en el formato estándar CSV, al oprimir el botón "**Descarga Resultado**".
 
 Nótese además, que las columnas que no tenían información originalmente, tampoco reportan resultados en ninguno de los dos casos ejemplificados.
+
+# 6 Estratificaciones de datos y operaciones sobre ellas
+
 
