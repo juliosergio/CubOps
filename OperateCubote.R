@@ -49,7 +49,7 @@ S.aggregate <- function (tt, mask, op, label, blank="*") {
     
     # y se recompone:
     recomp <- apply(descomp,1,paste,collapse="-")
-    rr <- aggregate(tt,list(agr=recomp),op)
+    rr <- aggregate(tt,list(agr=recomp),op, na.rm = T)
     # ss <- split(as.data.frame(tt),f = list(agr=recomp))
     # rr <- lapply(ss, function(elt) sapply(elt, op))
     colnames(rr)[1] <- label
@@ -60,7 +60,7 @@ arreglaDspl <- function (seccion, Coords, traspose=T) {
     # Arregla para desplegado una tabla
     n <- ncol(seccion) %/% nrow(Coords)
     ee <- cbind(sapply(Coords, rep, each=n),t(seccion)) # data.frame
-    rownames(ee) <- colnames(seccion)
+    rownames(ee) <- sub("\\.", ":", colnames(seccion)) # Para evitar confusiones
     as.data.frame(if (traspose) t(ee) else ee)
 }
 

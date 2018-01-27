@@ -340,41 +340,50 @@ server <- function(input, output, session) {
         isolate({
             if (tGraf != "" && !is.na(n0)) {
                 tb <- displTable[-(1:2), n0]
-                ntb <- rownames(displTable)[-(1:2)]
-                switch (tGraf,
-                    hist = {
-                        hh <- hist(tb, breaks = n, plot=F)
-                        # View(hh)
-                        p <- density(tb) # , bw = "SJ")
-                        # ff0 <- dfunCreate(tb)
-                        # ff0 <- dSfunCreate(tb) # c/Splines
-                        output$plt <- renderPlot({
-                            plot(hh, main = "histograma columna", 
-                                 freq = F, col="gray", xlim = range(p$x), ylim = range(p$y))
-                            lines(p, col="blue", lwd=2)
-                            dev.copy(png, ttplt)
-                            dev.off()
-                            # curve(ff0, col="blue", lwd=2, add=T)
-                        }) # output$plt
-                    }, # hist
-                    serie = {
-                        m <- length(tb)
-                        # el número máximo de etiquetas a desplegar será 20
-                        lbls <- if (m <= 20) ntb else maskChr(ntb, c(1, ceiling(m/20)-1))
-                        output$plt <- renderPlot({
-                            barplot(tb, names.arg = lbls, las=2)
-                            dev.copy(png, ttplt)
-                            dev.off()
-                        })
-                    }, # serie
-                    boxplot = {
-                        output$plt <- renderPlot({
-                            boxplot(tb, col = "#75AADB", pch=19)
-                            dev.copy(png, ttplt)
-                            dev.off()
-                        })
-                    }
-                )
+                if (all(is.na(tb))) {
+                    # Columna sin datos
+                    showModal(modalDialog(
+                        title = "ERROR: columna sin datos",
+                        "Columna sin datos: intente con otra!"
+                    ))
+                    output$plt <- renderPlot({NULL}) # Para borrar todo plot anterior
+                } else {
+                    ntb <- rownames(displTable)[-(1:2)]
+                    switch (tGraf,
+                        hist = {
+                            hh <- hist(tb, breaks = n, plot=F)
+                            # View(hh)
+                            p <- density(tb) # , bw = "SJ")
+                            # ff0 <- dfunCreate(tb)
+                            # ff0 <- dSfunCreate(tb) # c/Splines
+                            output$plt <- renderPlot({
+                                plot(hh, main = "histograma columna", 
+                                     freq = F, col="gray", xlim = range(p$x), ylim = range(p$y))
+                                lines(p, col="blue", lwd=2)
+                                dev.copy(png, ttplt)
+                                dev.off()
+                                # curve(ff0, col="blue", lwd=2, add=T)
+                            }) # output$plt
+                        }, # hist
+                        serie = {
+                            m <- length(tb)
+                            # el número máximo de etiquetas a desplegar será 20
+                            lbls <- if (m <= 20) ntb else maskChr(ntb, c(1, ceiling(m/20)-1))
+                            output$plt <- renderPlot({
+                                barplot(tb, names.arg = lbls, las=2)
+                                dev.copy(png, ttplt)
+                                dev.off()
+                            })
+                        }, # serie
+                        boxplot = {
+                            output$plt <- renderPlot({
+                                boxplot(tb, col = "#75AADB", pch=19)
+                                dev.copy(png, ttplt)
+                                dev.off()
+                            })
+                        }
+                    )
+                } # --if (all(is.na(tb))) ... else
             } else {
                 output$plt <- renderPlot({NULL}) # Para borrar todo plot anterior
             } # --if

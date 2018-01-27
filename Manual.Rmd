@@ -19,6 +19,16 @@ Para el análisis y la aplicación de operaciones o producción de algunos gráf
 
 En cualquier momento, el usuario puede descargar las tablas resultantes de sus operaciones en un formato estándar (csv), que podrá ser leído fácilmente por hojas de cálculo, tales como _LibreOffice Calc_, o _Excel_, o por otros sistemas o programas para desarrollar procesos adicionales con la información.
 
+## 1.1 Bases de datos de ejemplo
+
+Para que el usuario pueda experimentar con el sistema se proveen las siguientes bases de datos para descargase en un equipo local:
+
+1. [Datos de más de 60 estaciones en la cuenca del río Usumacinta.](http://172.16.19.27:3000/databases/UsumacintaDatos.zip)
+1. [Datos de 14 estaciones en la cuenca del río Conchos.](http://172.16.19.27:3000/databases/ConchosDatos.zip)
+1. [Información geográfica de ubicación las estaciones registradas en CLICOM.](http://172.16.19.27:3000/databases/Estaciones.csv)
+
+Estos datos pueden utilizarse a partir de las acciones que se describen a partir de la sección 3.5 (CubOps: colección de los datos).
+
 # 2 Aspecto general de CubOps
 
 Para ejecutar el sistema basta con introducir la siguiente URL en alguno de los _browsers_ comunes de la Web, tales como Chrome o Firefox:
@@ -185,4 +195,29 @@ Nótese además, que las columnas que no tenían información originalmente, tam
 
 # 6 Estratificaciones de datos y operaciones sobre ellas
 
+Al aplicar las distintas operaciones estadísticas, las fechas, que obran como nombre de los renglones de la tabla, se pueden usar para ejecutar distintas _estratificaciones_ de los datos. Se puede definir como un _**estrato**_ de una _estratificación_, al conjunto de renglones que comparten alguna porción de la fecha, por ejemplo, el año y el mes; esto es, por ejemplo, los 31 renglones del mes de marzo de 1961, constituirían un estrato para ese caso. La _**estratificación**_ sería entonces el conjunto de todos los estratos que la componen.
+
+## 6.1 Definición de una estratificación en CubOps
+
+Después de haber seleccionado alguna variable, y al momento de elegir alguna operación, se puede definir también alguna estratificación a partir de las fechas. Esto se hace, mediante el agrupamiento en los campos de fecha, como se muestra en la Fig. 13.
+
+**Figura 13.** Agrupamientos
+
+![Agrupa](Estratif.png)
+
+En el caso de la Fig. 13, se ha elegido el año y el mes, mientras que el día se ha descartado. Esto significa que los estratos se definirán a partir del año y el mes solamente. Esto es, la operación que se elija, la media en este caso, se ejecutará para los conjuntos de renglones que tengan el mismo año y mes, o sea, se estarán obteniendo los promedios mensuales de temperatura mínima a lo largo de todos los años en el registro. Así, la Fig. 14, muestra el resultado de esta operación. Nótese que en las fechas, el campo correspondiente al día se ha reemplazado por un asterisco "\*". Entonces, por ejemplo, el primer dato de la columna etiquetada como "s27001", se encuentra en el renglón "1951-01-\*"; ello indica que la media de temperaturas mínimas durante el primer mes de año 1951 es de 16.887°, y así son también todas las interpretaciones de todas las columnas y renglones de la tabla resultante.
+
+**Figura 14.** Resultados de una operación estratificada
+
+![Res Estratif](OpEstratif.png)
+
+Nuevamente, esta tabla resultante, puede ser descargada en un equipo local, en el formato estándar CSV, al oprimir el botón "**Descarga Resultado**".
+
+# 6.2 Estratificaciones y operaciones con resultados múltiples
+
+Cuando se ejecutan operaciones combinadas con estratificaciones de la tabla, se puede ver en la Fig. 14, que la tabla resultante arroja un renglón para cada estrato de los datos originales. Esto no representa ningún problema si la operación arroja un único resultado, como es el caso de la media, la mediana, o la desviación estándar, por ejemplo. En este punto surge la pregunta: ¿cómo maneja CubOps el caso de operaciones que arrojan más de un resultado?, ya que por cada estrato y estación se tendrían resultados múltiples. La respuesta es que el sistema _**expande la columna correspondiente a una estación, a tantas columnas como resultados arroje la operación en cuestión**_. La Fig. 15 muestra, como ejemplo, el caso de la producción de _terciles_, por medio de la operación "**quantile**", para una tabla original de temperaturas mínimas. Es de notarse aquí que los nombres de las columnas están formados por el nombre de la estación original, seguido del caracter ":", y luego un conjunto de caracteres que permitirán identificar cada caso, que para el ejemplo de los terciles son los porcentajes de probabilidad elegidos.
+
+**Figura 15.** Terciles para datos estratificados
+
+![Terc estrat](EstratifMultpl.png)
 
