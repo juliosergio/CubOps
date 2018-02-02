@@ -152,7 +152,7 @@ La tabla resultante, se puede descargar a su equipo local, en el formato estánd
 
 ## 4.1 Selección de variables y operaciones
 
-En la sección siguiente se empieza a tratar el asunto de la aplicación de operaciones sobre los datos contenidos en la tabla o variable seleccionada. Dado que **las operaciones se aplican sobre la tabla visible**, cada vez que se quiera aplicar una nueva operación sobre los mismos datos, será necesario _regresar_ y elegir nuevamente la misma variable para restablecer la tabla de origen. Esto, como se verá más adelante, es porque hay resultados que se obienenen de aplicar consecutivamente varias operaciones sobre las tablas consecutivas resultantes, por ejemplo, en el caso de los promedios de sumas acumulativas de precipitación.
+En la sección siguiente se empieza a tratar el asunto de la aplicación de operaciones sobre los datos contenidos en la tabla o variable seleccionada. Dado que **las operaciones se aplican sobre la tabla visible**, cada vez que se quiera aplicar una nueva operación sobre los mismos datos, será necesario _regresar_ y elegir nuevamente la misma variable para restablecer la tabla de origen. Esto, como se verá más adelante en la sección 6.3, es porque hay resultados que se obienenen de aplicar consecutivamente varias operaciones sobre las tablas consecutivas resultantes, por ejemplo, en el caso de los promedios de sumas acumulativas de precipitación.
 
 # 5 Operaciones estadísticas sobre columnas completas
 
@@ -213,11 +213,33 @@ En el caso de la Fig. 13, se ha elegido el año y el mes, mientras que el día s
 
 Nuevamente, esta tabla resultante, puede ser descargada en un equipo local, en el formato estándar CSV, al oprimir el botón "**Descarga Resultado**".
 
-# 6.2 Estratificaciones y operaciones con resultados múltiples
+## 6.2 Estratificaciones y operaciones con resultados múltiples
 
 Cuando se ejecutan operaciones combinadas con estratificaciones de la tabla, se puede ver en la Fig. 14, que la tabla resultante arroja un renglón para cada estrato de los datos originales. Esto no representa ningún problema si la operación arroja un único resultado, como es el caso de la media, la mediana, o la desviación estándar, por ejemplo. En este punto surge la pregunta: ¿cómo maneja CubOps el caso de operaciones que arrojan más de un resultado?, ya que por cada estrato y estación se tendrían resultados múltiples. La respuesta es que el sistema _**expande la columna correspondiente a una estación, a tantas columnas como resultados arroje la operación en cuestión**_. La Fig. 15 muestra, como ejemplo, el caso de la producción de _terciles_, por medio de la operación "**quantile**", para una tabla original de temperaturas mínimas. Es de notarse aquí que los nombres de las columnas están formados por el nombre de la estación original, seguido del caracter ":", y luego un conjunto de caracteres que permitirán identificar cada caso, que para el ejemplo de los terciles son los porcentajes de probabilidad elegidos.
 
 **Figura 15.** Terciles para datos estratificados
 
 ![Terc estrat](EstratifMultpl.png)
+
+## 6.3 Aplicación recurrente de operaciones
+
+Hay ocasiones en que es necesario aplicar una nueva operación al resultado de otra operación. Tal es el caso de los **promedios mensuales de precipitaciones acumuladas durante el mes**. Con este propósito, CubOps ha sido diseñado para aplicar cualquiera de las operaciones disponibles sobre la tabla actualmente visible en el panel de resultados tabulares.
+
+Por ejemplo, para producir justamente los **promedios mensuales de precipitaciones acumuladas durante el mes**, primeramente se selecciona la variable precipitación de la estructura de información vigente, como se muestra  en la Fig. 16.
+
+**Figura 16.** Selección de la variable precipitación
+
+![Recurr Prec](Recurr0.png)
+
+Ahora se procede a acumular las precipitaciones que ocurrieron cada mes, para ello se selecciona la operación **sum** (sumatoria), y en el **Agrupamiento** se elimina el campo correspondiente al día, con el fin de producir estratos mensuales para todos los años, tal como se muestra en la Fig. 17. Ahí, por ejemplo, en el renglón "1951-03-\*" y la columna "s27004", se encuntra el valor 133.6, lo que significa que durante el mes de marzo del año 1951, se observó una precipitación acumulada durante todo el mes de 133.6 mm en la estación 27004.
+
+**Figura 17.** Acumulación de precipitaciones por mes
+
+![Recurr Prec1](Recurr1.png)
+
+Finalmente, para producir los promedios mensuales de esos resultados para toda la serie, se procede a elegir la operación **mean** y se elimina ahora el campo correspondiente al año en el **Agrupamiento**. Después de oprimir el botón **Ejecuta**, se obtiene el resultado que se muestra en la Fig. 18. En el renglón "\*-09-\*" y columna "s27021", se observa un valor de 322.705, lo que significa que el promedio de precipitaciones acumuladas mensuales en el mes de septiembre, para la estación 27021, es de 322.705 mm.
+
+**Figura 18.** Promedios de precipitaciones acumuladas mensuales
+
+![Recurr Prec2](Recurr2.png)
 
