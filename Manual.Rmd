@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # 1 Introducción
 
-**CubOps** es una aplicación Web que le permitirá operar sobre un conjunto de puntos, típicamente estaciones meteorológicas, cada uno de los cuales contiene infromación temporal de un número finito de variables, como pueden ser, precipitación, temperaturas mínimas y máximas.
+**CubOps** es una aplicación Web que le permitirá operar sobre un conjunto de puntos, típicamente estaciones meteorológicas, cada uno de los cuales contiene información temporal de un número finito de variables, como pueden ser, precipitación, temperaturas mínimas y máximas.
 
 En general, el sistema trabaja con puntos a los que se le ha asociado un número de variables cualquiera, que dependen de una fecha secuencial en días.
 
@@ -242,4 +242,41 @@ Finalmente, para producir los promedios mensuales de esos resultados para toda l
 **Figura 18.** Promedios de precipitaciones acumuladas mensuales
 
 ![Recurr Prec2](Recurr2.png)
+
+# 7 Gráficas sencillas con CubOps
+
+Como una cualidad adicional, **CubOps** permite generar algunos tipos de gráficas sencillas, a saber: series, histogramas y _boxplots_ (diagramas de cajas). Estas gráficas permiten tener una mayor visión general de los resultados que se presentan en las tablas del panel de resultados tabulares. A continuación se indica cómo explotar esta característica del sistema.
+
+## 7.1 Gráficos de información completa de estaciones (columnas)
+
+Después de elegir alguna de las variables disponibles, como es el caso que se ha presentado en la Fig. 8, se puede proceder a producir alguna de las gráficas disponibles. Para ello es necesario primeramente, seleccionar alguna de las columnas en la tabla y luego el tipo de gráfico deseado. Por ejemplo, en la Fig. 19 se ha seleccionado la columna "s27040" y se ha elegido la producción de un gráfico de tipo "hist" (histograma); después de esa selección el gráfico correspondiente se muestra en la parte inferior, conocida como _panel de resultados gráficos_. El gráfico producido se puede salvar en un archivo gráfico, si se oprime el botón etiquetado como **Descarga Gráfico**.
+
+**Figura 19.** Producción de gráficos con **CubOps**
+
+![Grafico 1](Graf1.png)
+Para el caso particular de los histogramas, aparece además un control, conocido como _slider_, que permite incrementar o disminuir el número de barras que se presentan en el histograma. Al desplazar de botoncito, dinámicamente se incrementan o decrementan las barras que aparecen, como se puede apreciar el la Fig. 20.
+
+**Figura 20.** Otros controles en las gráficas
+
+![Grafico 2](Graf2.png)
+
+## 7.2 Algunos usos de los gráficos
+
+Cuando ya se ejecutan operaciones en las estaciones o columnas, los gráficos producidos pueden ser más interesantes. Por ejemplo, en la Fig. 21, se observa un gráfico de tipo "serie", que se ha producido después de haber ejecutado la operación "quantil" sobre todos los datos de temperatura mínima de la columna "s27040". Aquí, en el eje de las abscisas se tienen los rangos de cuantil, y en las ordenadas, los valores de las temperaturas.
+
+**Figura 21.** Gráfica de los cuantiles
+
+![Grafico 3](Graf3.png)
+
+Otro interesante gráfico a considerar son los _boxplots_, que dan también una idea de la distribución de la información. La Fig. 22 muestra un gráfico de este tipo para las temperaturas mínimas de la estación "s27004".
+
+**Figura 22.** Gráfica tipo _boxplot_
+
+![Grafico 4](Graf4.png)
+
+Un caso interesante es la graficación de la climatología de las precipitaciónes acumuladas mensuales, cuyo cálculo se ha presentado en forma tabular en la Fig. 18. Para graficar esto, basta con seleccionar alguna estación y el tipo de gráfico "serie"; la gráfica resultante se muestra en la Fig. 23.
+
+**Figura 23.** Climatología de precipitaciones acumuladas mensuales
+
+![Grafico 5](Graf5.png)
 
