@@ -3,12 +3,12 @@ title: 'CubOps: Manual de Usuario'
 author: "Julio Sergio Santana"
 date: "19 de enero de 2018"
 output:
+  html_document: 
+    fig_caption: yes
   pdf_document: 
     fig_caption: yes
     number_sections: yes
     toc: yes
-  html_document: 
-    fig_caption: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -29,9 +29,9 @@ En cualquier momento, el usuario puede descargar las tablas resultantes de sus o
 
 Para que el usuario pueda experimentar con el sistema se proveen las siguientes bases de datos para descargase en un equipo local:
 
-1. [Datos de más de 60 estaciones en la cuenca del río Usumacinta.](http://172.16.19.27:3000/databases/UsumacintaDatos.zip)
-1. [Datos de 14 estaciones en la cuenca del río Conchos.](http://172.16.19.27:3000/databases/ConchosDatos.zip)
-1. [Información geográfica de ubicación las estaciones registradas en CLICOM.](http://172.16.19.27:3000/databases/Estaciones.csv)
+1. Datos de más de 60 estaciones en la cuenca del río Usumacinta: [http://gradiente.imta.mx/content/databases/UsumacintaDatos.zip](http://gradiente.imta.mx/content/databases/UsumacintaDatos.zip)
+1. Datos de 14 estaciones en la cuenca del río Conchos: [http://gradiente.imta.mx/content/databases/ConchosDatos.zip](http://gradiente.imta.mx/content/databases/ConchosDatos.zip)
+1. Información geográfica de ubicación las estaciones registradas en CLICOM: [http://gradiente.imta.mx/content/databases/Estaciones.csv](http://gradiente.imta.mx/content/databases/Estaciones.csv)
 
 Estos datos pueden utilizarse a partir de las acciones que se describen a partir de la sección 3.5 (CubOps: colección de los datos).
 
@@ -39,7 +39,7 @@ Estos datos pueden utilizarse a partir de las acciones que se describen a partir
 
 Para ejecutar el sistema basta con introducir la siguiente URL en alguno de los _browsers_ comunes de la Web, tales como Chrome o Firefox:
 
-http://172.16.19.27:3838/CubOps
+http://gradiente.imta.mx:3838/CubOps
 
 El sistema desplegará una interfaz al usuario, en la cual podrá introducir sus peticiones y recibir sus respuestas. La Fig. 1 Muestra la apariencia general del sistema una vez que se han desarrollado varias operaciones. Al inicio de la sesión, sólo se muestra el menú etiquetado como **Acción**, en el área **A** de la Fig. 1, y las áreas **B** y **C** se muestran vacías, aunque, al pulsar en la pestaña etiquetada como **Manual**, en el área **B**, se desplegará el presente documento.
 

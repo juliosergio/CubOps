@@ -400,3 +400,51 @@ maskChr <- function(arr, pattrn, fill="") {
     arr[discr, rr := qq]
     return(arr$rr)
 }
+
+# MODULACIONES PARA expand.grid
+indexXG <- function(i, j, n, base=0) {
+    # Sean dos vectores A, B, con dimensiones n y m
+    # Si se hace C <- expand.grid(A,B),
+    # Sea a el elemento con índice i en A y
+    #     b el elemento con índice j en B
+    # Qué lugar (renglón) le corresponde al elemento (a,b)
+    # en C? ... esa es la pregunta que responde esta función
+    # llamándola así:  indexXG(i,j,n,1)
+    # ==================
+    # if (base) i <- i-base; j <- j-base}
+    # i <- ifelse(base, i-base, i)
+    # j <- ifelse(base, j-base, j)
+    i <- i - base
+    j <- j - base
+    # ind <- j*n + i 
+    # ind <- ifelse(base, ind+base, ind) 
+    # return(ind)
+    j*n + i + base
+}
+
+indexXGG <- function(Mi, Mn, base=0) {
+    # Generalización de la función anterior
+    # Mi y Mn son matrices; cada renglón representa 
+    # un caso, cada columna corresponde a cada uno de los
+    # índices en vectores (i,j,k ...) o dimensiones (n,m,r, ...)
+    
+    Mi <- Mi - base
+    Mn <- cbind(1, t(apply(Mn, 1, cumprod))[,-ncol(Mn), drop=F])
+    apply(Mi*Mn, 1, sum)+base
+}
+
+# toListCols <- function (x) split(x, rep(1:ncol(x), each = nrow(x)))
+toListCols <- function (x) as.list(as.data.frame(x))
+toListRows <- function (x) as.list(as.data.frame(t(x)))
+
+distPtVsPts <- function (Pt, Pts, ...) {
+    # distancia de un punto a n puntos
+    # Pt: un vector de dimensión m
+    # Pts: una matriz n x m: (las cols son las coordenadas y cada 
+    #                         renglón es un punto)
+    # Se usará la función dist()
+    # mms <- lapply(toListRows(Pts), function(rPt) rbind(Pt, rPt))
+    # as.numeric(lapply(mms, dist))
+    sapply(lapply(toListRows(Pts), function(rPt) rbind(Pt, rPt)), dist)
+}
+
